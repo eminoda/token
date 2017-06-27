@@ -1,0 +1,5 @@
+module.exports = {
+  SYS_REDIS_PASSWORD:'',
+  SYS_REDIS_HOST:'192.168.1.70',
+  SYS_REDIS_PORT:'6379'
+};
