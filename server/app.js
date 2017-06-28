@@ -9,8 +9,6 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var token = require('./routes/token');
 
-const base64url = require('base64url');
-
 var app = express();
 
 // view engine setup
@@ -47,13 +45,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var jwtService = require('./routes/jwtService.js');
-var jwt = require('jsonwebtoken');
-console.log(base64url(JSON.stringify({test:123})));
-let jwtToken = jwtService.buildJwt({
-  test:123
-}, 'secret', 60);
-console.log(jwtToken);
-let result = jwt.decode(token, {complete: true});
-console.log(result);
 module.exports = app;
