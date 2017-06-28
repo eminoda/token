@@ -1,5 +1,5 @@
 var jwt = require('jsonwebtoken');
-
+var jwt2 = require('jsonwebtoken-refresh');
 module.exports = {
   // iss: jwt签发者
   // sub: jwt所面向的用户
@@ -22,7 +22,16 @@ module.exports = {
         // }
     });
   },
-  decode:function(jwtToken){
-    return jwt.decode(jwtToken,'123456');
+  // 刷新jwt
+  rebuildJwt: function(token, expiresIn, secretOrPrivateKey) {
+    return jwt2.refresh(token, expiresIn, '123456');
+  },
+  // 解密
+  decode: function(jwtToken) {
+    return jwt.decode(jwtToken, '123456');
+  },
+  // 获取Jwt信息
+  getJwtInfo: function(jwtToken) {
+    return jwt.decode(jwtToken, { complete: true });
   }
 };

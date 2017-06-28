@@ -19,7 +19,7 @@ router.post('/login',function(req,res,next){
     // 验证通过
     let jwtToken = jwtService.buildJwt({
       userName:user.userName
-    },'secret',60);
+    },'secret',10);
     // token保存到客户端
     res.cookie('jwtToken', jwtToken);
     res.render('loginSuccess.pug');
@@ -33,17 +33,29 @@ router.post('/login',function(req,res,next){
  * @DateTime 2017-06-27T14:25:17+0800
  */
 router.get('/userInfo',function(req,res,next){
-  // 验证token有效性
-  let result = jwtService.decode(req.cookies.jwtToken);
-  console.log(result);
+
   let serverTime = moment(new Date().getTime()).unix();
-  console.log(moment(new Date().getTime()).unix());
-  if(result.exp>serverTime){
+  // 获取token
+  let token = req.headers.jwtToken||req.body.jwtToken||req.cookies.jwtToken;
+  // 解密token
+  let deToken = jwtService.decode(token);
+  // token有效，未过期
+  if(deToken&&deToken.exp>serverTime){
+    // 刷新失效时间
+    let orign = jwtService.getJwtInfo(token);
+    let jwtToken = jwtService.rebuildJwt(deToken,10);
+    // token保存到客户端
+    res.cookie('jwtToken', jwtToken);    
     // 查询用户信息
-    // 
-    res.render('userInfo.pug');
+    res.json({status:true,
+      token:token,
+      orign:orign,
+      jwtToken:jwtToken,
+      orign2:jwtService.getJwtInfo(jwtToken)
+    });
   }else{
-    next(new Error('Token已失效'));
+    // res.json({status:false,resultMsg:'Token已失效'});
+    res.redirect('login');
   }
 });
 
